@@ -20,6 +20,7 @@ public class FEALSolution extends FEAL {
         solution.triggerFEAL4Attack(pairs);
     }
 
+
     /**
      * Method to retrieve the bits from a 32 bit word
      *
@@ -44,12 +45,12 @@ public class FEALSolution extends FEAL {
      * @param k0_prime
      * @return
      */
-    public int evaluateConstant_k0_prime(PlainAndCipherText pair, int k0_prime) {
+    public int evaluateConstant_k0_prime(PlainAndCipherText pair, SubKey k0_prime) {
         int l0_xor_r0_xor_l4 = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ get(BytesPair.L4, pair);
         int[] S_5_13_21 = getBits(l0_xor_r0_xor_l4, 5, 13, 21);
         int l0_xor_l4_xor_r4 = get(BytesPair.L0, pair) ^ get(BytesPair.L4, pair) ^ get(BytesPair.R4, pair);
         int[] s_15 = getBits(l0_xor_l4_xor_r4, 15);
-        int l0_xor_r0_xor_k0_prime = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0_prime;
+        int l0_xor_r0_xor_k0_prime = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0_prime.getKey();
         int[] s_15_f = getBits(f(l0_xor_r0_xor_k0_prime), 15);
         int retVal = (S_5_13_21[0] ^ S_5_13_21[1] ^ S_5_13_21[2]) ^ s_15[0] ^ s_15_f[0];
         return retVal;
@@ -62,90 +63,97 @@ public class FEALSolution extends FEAL {
      * @param k0
      * @return
      */
-    public int evaluateConstant_k0(PlainAndCipherText pair, int k0) {
+    public int evaluateConstant_k0(PlainAndCipherText pair, SubKey k0) {
         int l0_xor_r0_xor_l4 = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ get(BytesPair.L4, pair);
         int[] S_13 = getBits(l0_xor_r0_xor_l4, 13);
         int l0_xor_l4_xor_r4 = get(BytesPair.L0, pair) ^ get(BytesPair.L4, pair) ^ get(BytesPair.R4, pair);
         int[] s_7_15_23_31 = getBits(l0_xor_l4_xor_r4, 7, 15, 23, 31);
-        int l0_xor_r0_xor_k0 = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0;
+        int l0_xor_r0_xor_k0 = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0.getKey();
         int[] s_7_15_23_31_f = getBits(f(l0_xor_r0_xor_k0), 7, 15, 23, 31);
         int retVal = (S_13[0] ^ (s_7_15_23_31[0] ^ s_7_15_23_31[1] ^ s_7_15_23_31[2] ^ s_7_15_23_31[3]) ^
                 (s_7_15_23_31_f[0] ^ s_7_15_23_31_f[1] ^ s_7_15_23_31_f[2] ^ s_7_15_23_31_f[3]));
         return retVal;
     }
 
-    public int evaluateConstant_k1_prime(PlainAndCipherText pair, int k0, int key) {
+    public int evaluateConstant_k1_prime(PlainAndCipherText pair, SubKey k0, SubKey key) {
         int l0_xor_l4_xor_r4 = get(BytesPair.L0, pair) ^ get(BytesPair.L4, pair) ^ get(BytesPair.R4, pair);
         int[] S_5_13_21 = getBits(l0_xor_l4_xor_r4, 5, 13, 21);
-        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0);
-        int[] s_15 = getBits(f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ key), 15);
+        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0.getKey());
+        int[] s_15 = getBits(f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ key.getKey()), 15);
         int retVal = (S_5_13_21[0] ^ S_5_13_21[1] ^ S_5_13_21[2]) ^ s_15[0];
         return retVal;
     }
 
-    public int evaluateConstant_k1(PlainAndCipherText pair, int k0, int key) {
+    public int evaluateConstant_k1(PlainAndCipherText pair, SubKey k0, SubKey key) {
         int l0_xor_l4_xor_r4 = get(BytesPair.L0, pair) ^ get(BytesPair.L4, pair) ^ get(BytesPair.R4, pair);
         int[] s_13 = getBits(l0_xor_l4_xor_r4, 13);
-        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0);
-        int[] s_7_15_23_31 = getBits(f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ key), 7, 15, 23, 31);
+        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0.getKey());
+        int[] s_7_15_23_31 = getBits(f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^
+                key.getKey()), 7, 15, 23, 31);
         int retVal = (s_13[0] ^ s_7_15_23_31[0] ^ s_7_15_23_31[1]) ^ s_7_15_23_31[2] ^ s_7_15_23_31[3];
         return retVal;
     }
 
-    public int evaluateConstant_k2_prime(PlainAndCipherText pair, int k0, int k1, int key) {
+    public int evaluateConstant_k2_prime(PlainAndCipherText pair, SubKey k0, SubKey k1, SubKey key) {
         int l0_xor_r0_xor_l4 = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ get(BytesPair.L4, pair);
         int[] s_5_13_21 = getBits(l0_xor_r0_xor_l4, 5, 13, 21);
 
-        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0);
-        int f_l0_xor_above_xor_k1 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ k1);
-        int f_l0_xor_r0_xor_above_xor_k2 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ f_l0_xor_above_xor_k1 ^ key);
+        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0.getKey());
+        int f_l0_xor_above_xor_k1 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ k1.getKey());
+        int f_l0_xor_r0_xor_above_xor_k2 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^
+                f_l0_xor_above_xor_k1 ^ key.getKey());
         int[] s_15 = getBits(f_l0_xor_r0_xor_above_xor_k2, 15);
 
         int retVal = (s_5_13_21[0] ^ s_5_13_21[1] ^ s_5_13_21[2]) ^ s_15[0];
         return retVal;
     }
 
-    public int evaluateConstant_k2(PlainAndCipherText pair, int k0, int k1, int key) {
+    public int evaluateConstant_k2(PlainAndCipherText pair, SubKey k0, SubKey k1, SubKey key) {
         int l0_xor_r0_xor_l4 = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ get(BytesPair.L4, pair);
         int[] s_13 = getBits(l0_xor_r0_xor_l4, 13);
 
-        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0);
-        int f_l0_xor_above_xor_k1 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ k1);
-        int f_l0_xor_r0_xor_above_xor_k2 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ f_l0_xor_above_xor_k1 ^ key);
+        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0.getKey());
+        int f_l0_xor_above_xor_k1 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ k1.getKey());
+        int f_l0_xor_r0_xor_above_xor_k2 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^
+                f_l0_xor_above_xor_k1 ^ key.getKey());
         int[] s_7_15_23_31 = getBits(f_l0_xor_r0_xor_above_xor_k2, 7, 15, 23, 31);
 
         int retVal = (s_13[0] ^ s_7_15_23_31[0] ^ s_7_15_23_31[1]) ^ s_7_15_23_31[2] ^ s_7_15_23_31[3];
         return retVal;
     }
 
-    public int evaluateConstant_k3_prime(PlainAndCipherText pair, int k0, int k1, int k2, int key) {
+    public int evaluateConstant_k3_prime(PlainAndCipherText pair, SubKey k0, SubKey k1, SubKey k2, SubKey key) {
         int l0_xor_l4_xor_r4 = get(BytesPair.L0, pair) ^ get(BytesPair.L4, pair) ^ get(BytesPair.R4, pair);
         int[] s_5_13_21 = getBits(l0_xor_l4_xor_r4, 5, 13, 21);
 
         int l0_xor_r0_xor_l4 = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ get(BytesPair.L4, pair);
         int[] s_15_a = getBits(l0_xor_r0_xor_l4, 15);
 
-        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0);
-        int f_l0_xor_above_xor_k1 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ k1);
-        int f_l0_xor_r0_xor_above_xor_k2 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ f_l0_xor_above_xor_k1 ^ k2);
-        int f_l0_xor_above2_xor_k3 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ f_l0_xor_r0_xor_above_xor_k2 ^ key);
+        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0.getKey());
+        int f_l0_xor_above_xor_k1 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ k1.getKey());
+        int f_l0_xor_r0_xor_above_xor_k2 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^
+                f_l0_xor_above_xor_k1 ^ k2.getKey());
+        int f_l0_xor_above2_xor_k3 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^
+                f_l0_xor_r0_xor_above_xor_k2 ^ key.getKey());
         int[] s_15_b = getBits(f_l0_xor_above2_xor_k3, 15);
 
         int retVal = (s_5_13_21[0] ^ s_5_13_21[1] ^ s_5_13_21[2]) ^ s_15_a[0] ^ s_15_b[0];
         return retVal;
     }
 
-    public int evaluateConstant_k3(PlainAndCipherText pair, int k0, int k1, int k2, int key) {
+    public int evaluateConstant_k3(PlainAndCipherText pair, SubKey k0, SubKey k1, SubKey k2, SubKey key) {
         int l0_xor_l4_xor_r4 = get(BytesPair.L0, pair) ^ get(BytesPair.L4, pair) ^ get(BytesPair.R4, pair);
         int[] s_13 = getBits(l0_xor_l4_xor_r4, 13);
 
         int l0_xor_r0_xor_l4 = get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ get(BytesPair.L4, pair);
         int[] s_7_15_23_31_a = getBits(l0_xor_r0_xor_l4, 7, 15, 23, 31);
 
-        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0);
-        int f_l0_xor_above_xor_k1 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ k1);
-        int f_l0_xor_r0_xor_above_xor_k2 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ f_l0_xor_above_xor_k1 ^ k2);
-        int f_l0_xor_above2_xor_k3 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ f_l0_xor_r0_xor_above_xor_k2 ^ key);
+        int f_l0_xor_r0_xor_k0 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^ k0.getKey());
+        int f_l0_xor_above_xor_k1 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^ k1.getKey());
+        int f_l0_xor_r0_xor_above_xor_k2 = f(get(BytesPair.L0, pair) ^ get(BytesPair.R0, pair) ^
+                f_l0_xor_above_xor_k1 ^ k2.getKey());
+        int f_l0_xor_above2_xor_k3 = f(get(BytesPair.L0, pair) ^ f_l0_xor_r0_xor_k0 ^
+                f_l0_xor_r0_xor_above_xor_k2 ^ key.getKey());
         int[] s_7_15_23_31_b = getBits(f_l0_xor_above2_xor_k3, 7, 15, 23, 31);
 
         int retVal = s_13[0] ^ (s_7_15_23_31_a[0] ^ s_7_15_23_31_a[1] ^ s_7_15_23_31_a[2] ^ s_7_15_23_31_a[3]) ^
@@ -155,30 +163,39 @@ public class FEALSolution extends FEAL {
 
     /**
      * Method to get all the possible keys for the inner two bytes
-     *
+     * i.e. 12 bits
      * @return
      */
     private List<SubKey> get_inner_bytes_candidates() {
         List<SubKey> retVal = new ArrayList<>();
         for (int i = 0; i < Math.pow(2, 12); i++) {
-            int bit12_key = (((i >> 6) & 0x3F) << 16) + ((i & 0x3F) << 8);
+            int byte1 = (((i >> 6) & 0x3f) << 16);
+            int byte2 = ((i & 0x3f) << 8);
+            int bit12_key = byte1 + byte2;
             retVal.add(new SubKey(bit12_key));
         }
         //log("length of list returned = " + retVal.size());
         return retVal;
     }
 
+    /**
+     * method to get all the possible keys for a given innerKey
+     * i.e. 20 bits
+     * @param outerKey
+     * @param innerKey
+     * @return
+     */
     private SubKey get_outer_bytes_candidate(int outerKey, int innerKey) {
-        int a0 = (((outerKey & 0xF) >> 2) << 6) + ((innerKey >> 16) & 0xFF);
-        int a1 = ((outerKey & 0x3) << 6) + ((innerKey >> 8) & 0xFF);
+        int a0 = (((outerKey & 0xf) >> 2) << 6) + ((innerKey >> 16) & 0xff);
+        int a1 = ((outerKey & 0x3) << 6) + ((innerKey >> 8) & 0xff);
 
-        int b0 = (outerKey >> 12) & 0xFF;
-        int b3 = (outerKey >> 4) & 0xFF;
+        int byte0 = (outerKey >> 12) & 0xff;
+        int byte3 = (outerKey >> 4) & 0xff;
 
-        int b1 = b0 ^ a0;
-        int b2 = b3 ^ a1;
+        int byte1 = byte0 ^ a0;
+        int byte2 = byte3 ^ a1;
 
-        int key = (b0 << 24) + (b1 << 16) + (b2 << 8) + b3;
+        int key = (byte0 << 24) + (byte1 << 16) + (byte2 << 8) + byte3;
         return new SubKey(key);
     }
 
@@ -227,7 +244,7 @@ public class FEALSolution extends FEAL {
             int iteration = 0, lastValue = 0;
 
             for (PlainAndCipherText pair : pairs) {
-                int constant = evaluateConstant_k0_prime(pair, candidatek0.getKey());
+                int constant = evaluateConstant_k0_prime(pair, candidatek0);
                 if (iteration != 0 && lastValue != constant) break;
 
                 lastValue = constant;
@@ -242,7 +259,7 @@ public class FEALSolution extends FEAL {
 
                     SubKey possibleSubKey = get_outer_bytes_candidate(i, candidatek0.getKey());
                     for (PlainAndCipherText pair : pairs) {
-                        int constant = evaluateConstant_k0(pair, possibleSubKey.getKey());
+                        int constant = evaluateConstant_k0(pair, possibleSubKey);
 
                         if (iteration != 0 && lastValue != constant) break;
 
@@ -270,7 +287,7 @@ public class FEALSolution extends FEAL {
             int iteration = 0, lastValue = 0;
 
             for (PlainAndCipherText pair : pairs) {
-                int constant = evaluateConstant_k1_prime(pair, k0.getKey(), candidatek1.getKey());
+                int constant = evaluateConstant_k1_prime(pair, k0, candidatek1);
                 if (iteration != 0 && lastValue != constant) break;
 
                 lastValue = constant;
@@ -285,7 +302,7 @@ public class FEALSolution extends FEAL {
 
                     SubKey possibleSubKey = get_outer_bytes_candidate(i, candidatek1.getKey());
                     for (PlainAndCipherText pair : pairs) {
-                        int constant = evaluateConstant_k1(pair, k0.getKey(), possibleSubKey.getKey());
+                        int constant = evaluateConstant_k1(pair, k0, possibleSubKey);
 
                         if (iteration != 0 && lastValue != constant) break;
 
@@ -311,7 +328,7 @@ public class FEALSolution extends FEAL {
             int iteration = 0, lastValue = 0;
 
             for (PlainAndCipherText pair : pairs) {
-                int constant = evaluateConstant_k2_prime(pair, k0.getKey(), k1.getKey(), candidatek2.getKey());
+                int constant = evaluateConstant_k2_prime(pair, k0, k1, candidatek2);
                 if (iteration != 0 && lastValue != constant) break;
 
                 lastValue = constant;
@@ -326,7 +343,7 @@ public class FEALSolution extends FEAL {
 
                     SubKey possibleSubKey = get_outer_bytes_candidate(i, candidatek2.getKey());
                     for (PlainAndCipherText pair : pairs) {
-                        int constant = evaluateConstant_k2(pair, k0.getKey(), k1.getKey(), possibleSubKey.getKey());
+                        int constant = evaluateConstant_k2(pair, k0, k1, possibleSubKey);
 
                         if (iteration != 0 && lastValue != constant) break;
 
@@ -353,7 +370,7 @@ public class FEALSolution extends FEAL {
             int iteration = 0, lastValue = 0;
 
             for (PlainAndCipherText pair : pairs) {
-                int constant = evaluateConstant_k3_prime(pair, k0.getKey(), k1.getKey(), k2.getKey(), candidatek3.getKey());
+                int constant = evaluateConstant_k3_prime(pair, k0, k1, k2, candidatek3);
                 if (iteration != 0 && lastValue != constant) break;
 
                 lastValue = constant;
@@ -368,8 +385,7 @@ public class FEALSolution extends FEAL {
 
                     SubKey possibleSubKey = get_outer_bytes_candidate(i, candidatek3.getKey());
                     for (PlainAndCipherText pair : pairs) {
-                        int constant = evaluateConstant_k3(pair, k0.getKey(), k1.getKey(),
-                                k2.getKey(), possibleSubKey.getKey());
+                        int constant = evaluateConstant_k3(pair, k0, k1, k2, possibleSubKey);
 
                         if (iteration != 0 && lastValue != constant) break;
 
@@ -416,20 +432,20 @@ public class FEALSolution extends FEAL {
         return 0;
     }
 
-    private void evaluateKeys(SubKey k0, SubKey k1, SubKey k2, SubKey k3,List<PlainAndCipherText> pairs) {
+    private void evaluateKeys(SubKey k0, SubKey k1, SubKey k2, SubKey k3, List<PlainAndCipherText> pairs) {
 
-        PlainAndCipherText lastPair =  pairs.get(pairs.size() - 1);
+        PlainAndCipherText lastPair = pairs.get(pairs.size() - 1);
         int y0 = f(get(BytesPair.L0, lastPair) ^ get(BytesPair.R0, lastPair) ^ k0.getKey());
         int y1 = f(get(BytesPair.L0, lastPair) ^ y0 ^ k1.getKey());
         int y2 = f(get(BytesPair.L0, lastPair) ^ get(BytesPair.R0, lastPair) ^ y1 ^ k2.getKey());
         int y3 = f(get(BytesPair.L0, lastPair) ^ y0 ^ y2 ^ k3.getKey());
 
-        int key4 = get(BytesPair.L0, lastPair) ^
-                get(BytesPair.R0, lastPair) ^ y1 ^ y3 ^ get(BytesPair.L4, lastPair);
-        int key5 = get(BytesPair.R0, lastPair) ^ y1 ^ y3 ^ y0 ^ y2 ^
-                get(BytesPair.R4, lastPair);
+        SubKey key4 = new SubKey(get(BytesPair.L0, lastPair) ^
+                get(BytesPair.R0, lastPair) ^ y1 ^ y3 ^ get(BytesPair.L4, lastPair));
+        SubKey key5 = new SubKey(get(BytesPair.R0, lastPair) ^ y1 ^ y3 ^ y0 ^ y2 ^
+                get(BytesPair.R4, lastPair));
 
-        int key[] = {k0.getKey(), k1.getKey(), k2.getKey(), k3.getKey(), key4, key5};
+        int key[] = {k0.getKey(), k1.getKey(), k2.getKey(), k3.getKey(), key4.getKey(), key5.getKey()};
 
         for (PlainAndCipherText pair : pairs) {
 
@@ -447,25 +463,24 @@ public class FEALSolution extends FEAL {
 
     }
 
-    private void logKeys(SubKey k0, SubKey k1, SubKey k2, SubKey k3, int k4, int k5, boolean binary) {
+    private void logKeys(SubKey k0, SubKey k1, SubKey k2, SubKey k3, SubKey k4, SubKey k5, boolean binary) {
         if (binary) {
             StringBuilder sb = new StringBuilder();
             sb.append("k0 " + String.format("%32s", Integer.toBinaryString(k0.getKey())).replace(' ', '0'));
             sb.append("\tk1 " + String.format("%32s", Integer.toBinaryString(k1.getKey())).replace(' ', '0'));
             sb.append("\tk2 " + String.format("%32s", Integer.toBinaryString(k2.getKey())).replace(' ', '0'));
             sb.append("\tk3 " + String.format("%32s", Integer.toBinaryString(k3.getKey())).replace(' ', '0'));
-            sb.append("\tk4 " + String.format("%32s", Integer.toBinaryString(k4)).replace(' ', '0'));
-            sb.append("\tk5 " + String.format("%32s", Integer.toBinaryString(k5)).replace(' ', '0'));
+            sb.append("\tk4 " + String.format("%32s", Integer.toBinaryString(k4.getKey())).replace(' ', '0'));
+            sb.append("\tk5 " + String.format("%32s", Integer.toBinaryString(k5.getKey())).replace(' ', '0'));
             log(sb.toString());
-        }
-        else {
+        } else {
             StringBuilder sb = new StringBuilder();
             sb.append("k0 0x" + Integer.toHexString(k0.getKey()));
             sb.append("\tk1 0x" + Integer.toHexString(k1.getKey()));
             sb.append("\tk2 0x" + Integer.toHexString(k2.getKey()));
             sb.append("\tk3 0x" + Integer.toHexString(k3.getKey()));
-            sb.append("\tk4 0x" + Integer.toHexString(k4));
-            sb.append("\tk5 0x" + Integer.toHexString(k5));
+            sb.append("\tk4 0x" + Integer.toHexString(k4.getKey()));
+            sb.append("\tk5 0x" + Integer.toHexString(k5.getKey()));
             log(sb.toString());
         }
     }
